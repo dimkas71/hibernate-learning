@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.databind.util.Converter;
 
+import ua.selftaught.entity.Employee.Male;
+
 public class Employee {
 	
 	public enum Male {
@@ -20,16 +22,20 @@ public class Employee {
 	private String code;
 	private String name;
 	private LocalDate birthDate;
+	private String uniqueId;
 	private Male male;
 	
+	
+
 	public Employee() {}
 
-	public Employee(String uuid, String code, String name, LocalDate birthDate, Male male) {
+	public Employee(String uuid, String code, String name, LocalDate birthDate, String uniqueId, Male male) {
 		super();
 		this.uuid = uuid;
 		this.code = code;
 		this.name = name;
 		this.birthDate = birthDate;
+		this.uniqueId = uniqueId;
 		this.male = male;
 	}
 
@@ -65,7 +71,7 @@ public class Employee {
 	}
 
 	@JsonProperty("BirthDate")
-	@JsonDeserialize(converter = LocalDateDeserializer.class)
+	@JsonDeserialize(converter = LocalDateConverter.class)
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
@@ -75,8 +81,18 @@ public class Employee {
 	}
 
 	@JsonProperty("Male")
+	@JsonDeserialize(converter = MaleConverter.class)
 	public void setMale(Male male) {
 		this.male = male;
+	}
+	
+	public String getUniqueId() {
+		return uniqueId;
+	}
+	
+	@JsonProperty("UniqueId")
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 	@Override
@@ -108,15 +124,17 @@ public class Employee {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Employee(uuid=").append(uuid).append(", code=").append(code).append(", name=").append(name)
-				.append(", birthDate=").append(birthDate).append(", male=").append(male).append(")");
+				.append(", birthDate=").append(birthDate).append(", uniqueId=").append(uniqueId).append(", male=")
+				.append(male).append(")");
 		return builder.toString();
 	}
+
 	
 	
 	
 }
 
-class LocalDateDeserializer implements Converter<String, LocalDate> {
+class LocalDateConverter implements Converter<String, LocalDate> {
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy H:mm:SS");
 	
@@ -135,5 +153,29 @@ class LocalDateDeserializer implements Converter<String, LocalDate> {
 		return typeFactory.constructType(LocalDate.class);
 	}
 	
+	
+}
+
+class MaleConverter implements Converter<String, Employee.Male> {
+	private static final String MALE = "Мужской";
+	private static final String FEMALE = "Женский";
+	@Override
+	public Male convert(String value) {
+		Employee.Male m = Employee.Male.MALE;
+		if (value.toUpperCase().equals(FEMALE)) {
+			m = Male.FEMALE;
+		}
+		return m;
+	}
+
+	@Override
+	public JavaType getInputType(TypeFactory typeFactory) {
+		return typeFactory.constructType(String.class);
+	}
+
+	@Override
+	public JavaType getOutputType(TypeFactory typeFactory) {
+		return typeFactory.constructType(Employee.Male.class);
+	}
 	
 }

@@ -1,21 +1,30 @@
 package ua.selftaught;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ua.selftaught.entity.Employee;
 
 public class HibernateSessionApp {
 
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		String birthDate = "07.12.1981 0:00:00";
+	
 		
+		TypeReference<List<Employee>> tr = new TypeReference<List<Employee>>() {};
 		
-		LocalDate date = mapper.readValue(birthDate, LocalDate.class);
-		System.out.println(date);
+		Path userDir = Paths.get(System.getProperty("user.dir"));
+		
+		List<Employee> e = mapper.readValue(userDir.resolve("employees.json").toFile(),tr);
+		
+		System.out.println(e);
 		
 		
 	}
