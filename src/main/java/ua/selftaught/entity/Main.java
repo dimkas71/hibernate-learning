@@ -24,6 +24,35 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		//loadUsers();
+		//loadHartTrophyWinners();
+		System.out.println(findAllHTW());
+	}
+
+
+	private static List<HartTrophyWinners> findAllHTW() {
+		
+		List<HartTrophyWinners> htws = new ArrayList<>();
+		
+		EntityManager em = null;
+		
+		try {
+			em = EMF.createEntityManager();
+			em.getTransaction().begin();
+			TypedQuery<HartTrophyWinners> q = em.createQuery("from HartTrophyWinners", HartTrophyWinners.class);
+			htws = q.getResultList();
+			em.getTransaction().commit();
+		} catch (IllegalArgumentException | PersistenceException ex) {
+			System.out.println(ex.getMessage());
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
+		
+		return Collections.unmodifiableList(htws);
+	}
+	
+
+	private static void loadHartTrophyWinners() throws IOException {
 		Path userDir = Paths.get(System.getProperty("user.dir"));
 
 		Path csvPath = userDir.resolve(CSV_FILE);
@@ -57,7 +86,6 @@ public class Main {
 				
 			}
 		}
-		
 	}
 
 	
