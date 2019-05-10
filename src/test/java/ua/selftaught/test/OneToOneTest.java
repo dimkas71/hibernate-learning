@@ -1,6 +1,7 @@
 package ua.selftaught.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -52,29 +53,20 @@ class OneToOneTest {
 	
 	
 	@Test
-	@DisplayName("When create a user entity then the size of user's list is equal to one")
-	void whenCreateUserThenListSizeNonZero() {
+	@DisplayName("when create a new user then size of the table increase by one")
+	void whenCreateANewUserThenSizeOfTheTableIncreaseByOne() {
 		
-		//act
-		User u = em.createQuery("Select u from User u where u.name = :name", User.class)
-			.setParameter("name", "Dimkas")
+		Long countBefore = em.createQuery("select count(u) from User u", Long.class)
 			.getSingleResult();
 		
-		if (u == null) {
-			
-			//arrange
-			User user = new User(null, "Dimkas", "secret", null);
-			save(user);
-		}
+		User u = new User(null, "Dimkas", "secret", null);
 		
+		save(u);
 		
-		List<User> users = em.createQuery("Select u from User u", User.class)
-			.getResultList();
+		Long countAfter = em.createQuery("select count(u) from User u", Long.class)
+							.getSingleResult();
 		
-		//assert
-		assertEquals(1, users.size(), "Size should be 1");
-		assertEquals(1L, users.get(0).getId(), () -> "Should be equal to 1");
-		assertEquals("secret", users.get(0).getPassword(), () -> "the 'secret' should be an answer for it");
+		assertEquals(1, countAfter - countBefore, () -> "Should be 1");
 		
 	}
 	
@@ -85,22 +77,17 @@ class OneToOneTest {
 		Role r = new Role(null, "Admin");
 		save(r);
 		
-		// act
-		User u = em.createQuery("Select u from User u where u.name = :name", User.class).setParameter("name", "Dimkas")
-				.getSingleResult();
-
-		if (u == null) {
-			// arrange
-			User user = new User(null, "Dimkas", "secret", r);
-			save(user);
-		}
+		User u = new User(null, "Dimkas", "secret", r);
+		save(u);
 		
-		User created = em.createQuery("Select u from User u", User.class)
+		
+		Long count = em.createQuery("select count(u) from User u where u.role.name = :name", Long.class)
+			.setParameter("name", r.getName())
 			.getSingleResult();
 		
+		assertTrue(count > 0, () -> "Count should be greater then zero");
 		
-		assertEquals("Admin", created.getRole().getName(), () -> "User with role 'Admin' should be created" );
-		
+	
 		
 	}
 	
@@ -123,20 +110,6 @@ class OneToOneTest {
 			em.getTransaction().rollback();
 		}
 	}
-	
-	private void deleteAllUsers() {
-		try {
-			em.getTransaction().begin();
-			int rowsUpdated = em.createQuery("Delete User u")
-				.executeUpdate();
-			System.out.println("Updated rows----------------------------------------" + rowsUpdated);
-			em.getTransaction().commit();
-		} catch(PersistenceException e) {
-			em.getTransaction().rollback();
-			e.printStackTrace();
-		}
-	}
-	
 		
 }
 
