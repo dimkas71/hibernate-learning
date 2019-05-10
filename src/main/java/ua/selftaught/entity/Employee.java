@@ -3,6 +3,16 @@ package ua.selftaught.entity;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -11,6 +21,8 @@ import com.fasterxml.jackson.databind.util.Converter;
 
 import ua.selftaught.entity.Employee.Male;
 
+@Entity
+@Table(name = "employees")
 public class Employee {
 	
 	public enum Male {
@@ -18,19 +30,30 @@ public class Employee {
 		FEMALE
 	}
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
+	private Long id;
+	
 	private String uuid;
 	private String code;
 	private String name;
+	
+	@Column(name = "birth_date")
 	private LocalDate birthDate;
+	
 	private String uniqueId;
+	
+	@Enumerated(EnumType.STRING)
 	private Male male;
 	
 	
 
 	public Employee() {}
 
-	public Employee(String uuid, String code, String name, LocalDate birthDate, String uniqueId, Male male) {
+	public Employee(Long id, String uuid, String code, String name, LocalDate birthDate, String uniqueId, Male male) {
 		super();
+		this.id = id;
 		this.uuid = uuid;
 		this.code = code;
 		this.name = name;
@@ -39,7 +62,13 @@ public class Employee {
 		this.male = male;
 	}
 
+	public Long getId() {
+		return id;
+	}
 	
+	public void setId(Long newId) {
+		this.id = newId;
+	}
 	public String getUuid() {
 		return uuid;
 	}
@@ -159,10 +188,11 @@ class LocalDateConverter implements Converter<String, LocalDate> {
 class MaleConverter implements Converter<String, Employee.Male> {
 	private static final String MALE = "Мужской";
 	private static final String FEMALE = "Женский";
+	
 	@Override
 	public Male convert(String value) {
 		Employee.Male m = Employee.Male.MALE;
-		if (value.toUpperCase().equals(FEMALE)) {
+		if (value.equalsIgnoreCase(FEMALE)) {
 			m = Male.FEMALE;
 		}
 		return m;
