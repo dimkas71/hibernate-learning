@@ -5,6 +5,9 @@ import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FetchType;
@@ -107,6 +110,57 @@ class OneToOneTest {
 		
 		assertEquals("Error while committing the transaction", re.getMessage());
 	}
+	
+	
+	@Test
+	@DisplayName("When a role with user is saved then users data read correctly")
+	void whenSaveRoleWithUserThenUsersDataReadCorrectly() {
+		
+		Role savedRole = doInJPA(() -> emf, em -> {
+			Role r = new Role(null, "Admin", null);
+			
+			User u = new User(null, "Dimkas", "secret", r);
+			r.setUser(u);
+			em.persist(r);
+			em.persist(u);
+			
+			return em.createQuery("Select r from Role r where r.name = :name", Role.class)
+				.setParameter("name", "Admin")
+				.getSingleResult();
+			
+		}, null);
+		
+		
+		assertEquals("Dimkas", savedRole.getUser().getName());
+		assertEquals("secret", savedRole.getUser().getPassword());
+		
+	}
+	
+	@Test
+	void test() {//TODO: fix this test
+		List<Role> roles = doInJPA(() -> emf, em -> {
+			
+			Role r = new Role(null, "Admin");
+			
+			User u = new User(null, "Dimkas", "secret", r);
+			
+			r.setUser(u);
+			
+			em.persist(u);
+			em.persist(r);
+			
+			em.remove(u);
+			
+			return em.createQuery("Select r from Role r where r.id > :id", Role.class)
+					.setParameter("id", 0L)
+					.getResultList();
+			
+			
+		}, null);
+		
+		System.out.println(roles);
+	}
+	
 		
 }
 
@@ -120,6 +174,14 @@ class Role {
 	private Long id;
 	
 	private String name;
+	
+	@OneToOne(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+	private User user;
+	
+	public Role(Long id, String name) {
+		this(id, name, null);
+	}
+	
 }
 
 @Data
