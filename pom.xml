@@ -59,6 +59,15 @@
 			<artifactId>junit-jupiter-params</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-testing -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-testing</artifactId>
+		    <version>5.4.2.Final</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
