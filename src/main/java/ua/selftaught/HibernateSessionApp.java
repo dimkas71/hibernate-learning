@@ -27,6 +27,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 public class HibernateSessionApp {
 	
@@ -41,14 +42,14 @@ public class HibernateSessionApp {
 		
 		
 		em.getTransaction().begin();
-		User u = em.find(User.class, 5);
-		
-		u.setPassword("secret3");
-		
-		em.persist(u);
+	
+		em.createQuery("select u from User1 u", User.class)
+			.getResultStream()
+			.forEach(u -> {
+				log.infov("{0}", u.toString());
+			});
 		
 		em.getTransaction().commit();
-		
 		
 		
 		em.close();
@@ -90,6 +91,7 @@ public class HibernateSessionApp {
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"user"})
 @NamedQueries({
 	@NamedQuery(
 			name = "get_all_roles",
@@ -150,7 +152,7 @@ class PasswordConverter implements AttributeConverter<String, String> {
 		try {
 			Cipher cipher = Cipher.getInstance(Algorithm);
 			cipher.init(Cipher.DECRYPT_MODE, key);
-			return new String(Base64.getDecoder().decode(dbData.getBytes()));
+			return new String(cipher.doFinal(Base64.getDecoder().decode(dbData.getBytes())));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
