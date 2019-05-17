@@ -29,6 +29,7 @@ import javax.persistence.RollbackException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 class OneToOneTest {
 	
@@ -167,6 +168,7 @@ class OneToOneTest {
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"user"})
 @Entity
 class Role {
 	@Id
