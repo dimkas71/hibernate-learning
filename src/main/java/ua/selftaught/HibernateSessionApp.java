@@ -3,6 +3,7 @@ package ua.selftaught;
 import java.security.Key;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -43,11 +44,12 @@ public class HibernateSessionApp {
 		
 		em.getTransaction().begin();
 	
-		em.createQuery("select u from User1 u", User.class)
-			.getResultStream()
-			.forEach(u -> {
-				log.infov("{0}", u.toString());
-			});
+		List<User> users = em.createQuery("select u from User1 u", User.class)
+			.getResultList();
+		
+		
+		log.infov("{0}", users);
+		
 		
 		em.getTransaction().commit();
 		
