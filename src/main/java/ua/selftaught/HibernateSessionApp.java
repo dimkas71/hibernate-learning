@@ -50,9 +50,7 @@ public class HibernateSessionApp {
 		
 		log.infov("{0}", users);
 		
-		
 		em.getTransaction().commit();
-		
 		
 		em.close();
 		
