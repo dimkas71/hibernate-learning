@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 
@@ -44,6 +45,7 @@ public class HibernateSessionApp {
 		
 		final EntityManager em = EMF.createEntityManager();
 		
+		try {
 		
 		em.getTransaction().begin();
 	
@@ -76,7 +78,13 @@ public class HibernateSessionApp {
 		log.infov("{0}",order);		
 		
 		em.getTransaction().commit();
-		
+		} catch (PersistenceException ex) {
+			log.infov("{0}", ex.getMessage());
+			
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+		}
 		em.close();
 		
 	}
