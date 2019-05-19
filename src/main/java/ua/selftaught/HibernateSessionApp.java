@@ -3,7 +3,7 @@ package ua.selftaught;
 import java.security.Key;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,6 +29,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ua.selftaught.entity.northwind.Customer;
+import ua.selftaught.entity.northwind.Employee;
+import ua.selftaught.entity.northwind.Product;
 
 public class HibernateSessionApp {
 	
@@ -44,11 +47,33 @@ public class HibernateSessionApp {
 		
 		em.getTransaction().begin();
 	
-		List<User> users = em.createQuery("select u from User1 u", User.class)
+		
+		List<Customer> customers = em.createQuery("select c from Customer c", Customer.class)
 			.getResultList();
 		
+		log.infov("{0}", customers);
 		
-		log.infov("{0}", users);
+		List<Employee> employees = em.createQuery("select e from Employee e", Employee.class)
+			.getResultList();
+		
+		log.infov("{0}", employees);
+		
+		log.infov("{0}", employees
+				.stream()
+				.map(e -> e.getAvatar())
+				.distinct()
+				.collect(Collectors.toList()));
+		
+		List<Product> products = em.createQuery("select p from Product p", Product.class)
+			.getResultList();
+		
+		log.infov("{0}", products);
+		
+		ua.selftaught.entity.northwind.Order order = em.createQuery("select o from Order o where o.id = :id", ua.selftaught.entity.northwind.Order.class)
+				.setParameter("id", 4011)
+				.getSingleResult();
+				
+		log.infov("{0}",order);		
 		
 		em.getTransaction().commit();
 		

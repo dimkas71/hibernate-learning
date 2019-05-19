@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.util.Converter;
 
 import ua.selftaught.entity.Employee.Male;
 
-@Entity
+@Entity(name = "Employee1")
 @Table(name = "employees")
 public class Employee {
 	
