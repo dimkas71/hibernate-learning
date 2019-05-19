@@ -19,7 +19,7 @@
             <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://127.0.0.1:5432/hibernate"/>
             <property name="hibernate.hikari.username" value="postgres"/>
             <property name="hibernate.hikari.password" value="test"/>
-    		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+    		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
     		<property name="hibernate.show_sql" value="true"/>
     		<property name="hibernate.hbm2ddl.auto" value="update"/>
     	</properties>

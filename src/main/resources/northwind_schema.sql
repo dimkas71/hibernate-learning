@@ -8,6 +8,8 @@ DROP SCHEMA IF EXISTS northwind;
 
 CREATE SCHEMA northwind;
 
+DROP TABLE IF EXISTS northwind.customers;
+
 /* Table: customers */
 CREATE TABLE northwind.customers (
   id              INT NOT NULL,
@@ -99,8 +101,8 @@ CREATE TABLE northwind.products (
 
 
 /* Foreign Key: orders */
-ALTER TABLE northwind.orders ADD CONSTRAINT fk_orders__customers FOREIGN KEY (customer_id) REFERENCES customers(id);
-ALTER TABLE northwind.orders ADD CONSTRAINT fk_orders__employees FOREIGN KEY (employee_id) REFERENCES employees(id);
+ALTER TABLE northwind.orders ADD CONSTRAINT fk_orders__customers FOREIGN KEY (customer_id) REFERENCES northwind.customers(id);
+ALTER TABLE northwind.orders ADD CONSTRAINT fk_orders__employees FOREIGN KEY (employee_id) REFERENCES northwind.employees(id);
 /* Foreign Key:  order_details */
-ALTER TABLE northwind.order_details ADD CONSTRAINT fk_order_details__orders      FOREIGN KEY (order_id) REFERENCES orders(id);
-ALTER TABLE northwind.order_details ADD CONSTRAINT fk_order_details__products FOREIGN KEY (product_id) REFERENCES products(id);
+ALTER TABLE northwind.order_details ADD CONSTRAINT fk_order_details__orders      FOREIGN KEY (order_id) REFERENCES northwind.orders(id);
+ALTER TABLE northwind.order_details ADD CONSTRAINT fk_order_details__products FOREIGN KEY (product_id) REFERENCES northwind.products(id);

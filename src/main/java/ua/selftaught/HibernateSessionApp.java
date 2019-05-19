@@ -22,6 +22,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+import javax.persistence.Table;
 
 import org.jboss.logging.Logger;
 
@@ -132,6 +133,7 @@ public class HibernateSessionApp {
 	)
 })
 @Entity
+@Table(name = "roles")
 class Role {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -146,6 +148,7 @@ class Role {
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity(name = "User1")
+@Table(name = "users")
 class User {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
