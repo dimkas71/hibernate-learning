@@ -3,12 +3,14 @@ package ua.selftaught.entity.northwind;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -25,21 +27,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "order_details", schema = "northwind")
 public class OrderDetail implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8971567024956350925L;
 
 	@Id
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@NotNull
 	@JoinColumn(name = "order_id")
+	@MapsId("id")
 	private Order order;
 	
 	@Id
 	@NotNull
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
+	@MapsId("id")
 	private Product product;
 	
 	private Double quantity;

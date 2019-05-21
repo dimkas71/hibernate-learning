@@ -78,7 +78,6 @@
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-testing</artifactId>
 		    <version>5.4.2.Final</version>
-		    <scope>test</scope>
 		</dependency>
 		
 		

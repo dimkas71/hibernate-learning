@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Entity(name = "Employee")
 @Table(name = "employees", schema = "northwind")
 public class Employee {

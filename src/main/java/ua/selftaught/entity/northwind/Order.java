@@ -1,13 +1,12 @@
 package ua.selftaught.entity.northwind;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,13 +14,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Entity
 @Table(name = "orders", schema = "northwind")
 public class Order {
@@ -62,7 +64,7 @@ public class Order {
 	@Column(name = "ship_country")
 	private String shipCountry;
 	
-	@Column(name = "shippping_fee")
+	@Column(name = "shipping_fee")
 	private Double shippingFee;
 	
 	@Column(name = "payment_type")
@@ -74,8 +76,9 @@ public class Order {
 	@Column(name = "order_status")
 	private String orderStatus;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<OrderDetail> details = new ArrayList<>();
+	@OneToMany(mappedBy = "order")
+	@Fetch(FetchMode.JOIN)
+	private Set<OrderDetail> details = new HashSet<>();
 	
 	
 	

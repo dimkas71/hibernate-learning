@@ -39,7 +39,7 @@ public class HibernateSessionApp {
 	
 	private static final Logger log =  Logger.getLogger(HibernateSessionApp.class);
 	
-	private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("ua.selftaught.hibernate.jpa");
+	private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("ua.selftaught.hibernate.jpa.h2");
 	
 	public static void main(String[] args) {
 		
@@ -76,7 +76,7 @@ public class HibernateSessionApp {
 				.setParameter("id", 4011)
 				.getSingleResult();
 				
-		log.infov("{0}",order);		
+		log.infov("{0}",order.getDetails());		
 		
 		em.getTransaction().commit();
 		} catch (PersistenceException ex) {
