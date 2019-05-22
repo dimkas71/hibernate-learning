@@ -20,13 +20,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "book", schema = "compositeid")
 public class Book {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
 	private String title;
 
 	private String author;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Library library;
 
 }

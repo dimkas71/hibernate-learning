@@ -2,16 +2,23 @@ package ua.selftaught;
 
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
-import ua.selftaught.entity.northwind.Customer;
+import ua.selftaught.entity.compositeid.Book;
 
 public class HibernateApp {
 private static final Logger log =  Logger.getLogger(HibernateSessionApp.class);
@@ -32,21 +39,58 @@ private static final Logger log =  Logger.getLogger(HibernateSessionApp.class);
 		EMF = Persistence.createEntityManagerFactory("ua.selftaught.hibernate.jpa.h3", props);
 	}
 	
-	public static void main(String[] args) {
-			
+	public static void main(String[] args) throws URISyntaxException, IOException {
+		
+		loadBooks();
+		
+		
 		doInJPA(() -> EMF, em -> {
 			
-			List<Customer> customers = em.createQuery("select c from Customer c", Customer.class)
-				.getResultList();
 			
-			
-			log.infov("{0}", "Hello JPA");
-			
-			log.infov("Customers : {0}", customers);
 			
 		});
 		
 	
+	}
+	
+	
+	private static void loadBooks() throws URISyntaxException, IOException {
+		
+		URI uri = HibernateApp.class.getClassLoader().getResource("books.csv").toURI();
+		
+		final List<Book> books = new ArrayList();
+		
+		if (Files.exists(Paths.get(uri))) {
+			
+			books.addAll(
+					Files.lines(Paths.get(uri))
+				.map(s -> {
+					String[] splitted = s.split(";");
+					return new Book(
+							null,
+							splitted[0].trim().replaceAll("\"", ""),
+							splitted[1].trim().replaceAll("\"", ""));
+				})
+				.collect(Collectors.toList())
+				);
+			
+			
+		} else {
+			log.infov("File books.csv is not found");
+		}
+		
+		
+		
+		
+		doInJPA(() -> EMF, em -> {
+			
+			em.createQuery("select b from Book b", Book.class)
+				.getResultStream()
+				.forEach(em::remove);
+			
+			books.forEach(em::persist);
+		});
+		
 	}
 
 }
