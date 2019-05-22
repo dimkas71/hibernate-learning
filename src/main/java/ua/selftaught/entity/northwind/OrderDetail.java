@@ -33,14 +33,12 @@ public class OrderDetail implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@NotNull
 	@JoinColumn(name = "order_id")
-	@MapsId("id")
 	private Order order;
 	
 	@Id
 	@NotNull
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
-	@MapsId("id")
 	private Product product;
 	
 	private Double quantity;
