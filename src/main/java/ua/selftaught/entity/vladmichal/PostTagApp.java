@@ -26,7 +26,12 @@ public class PostTagApp {
 			
 			log.infov("{0}", misc.getName());
 			
-			Post p = em.createQuery("select p from Post p where p.id = :id", Post.class)
+			Post p = em.createQuery(
+					  "select p "
+					+ "from Post p "
+					+ "join fetch p.tags pt "
+					+ "join fetch pt.tag "
+					+ "where p.id = :id", Post.class)
 				.setParameter("id", 13)
 				.getSingleResult();
 			
